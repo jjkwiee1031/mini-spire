@@ -1,6 +1,6 @@
 from app.deck import DeckService
-from app.models.cards import Card, CardType
-from app.models.deck import DeckPiles
+from app.models import Card, CardType
+from app.models import DeckPiles
 
 
 def make_card(i: int) -> Card:

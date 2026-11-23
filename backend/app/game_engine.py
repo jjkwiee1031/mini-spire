@@ -3,8 +3,8 @@
 Flow: combat -> (win) card reward -> combat ... -> after 3 wins, boss ->
 (win) victory / (die) defeat.
 
-Owns RunState and delegates combat rules to CombatService, cards to
-DeckService, randomness to injected RNG. Framework-free and UI-free.
+Owns RunState and delegates combat rules to CombatService, pile mechanics
+to DeckService, randomness to injected RNG. Framework-free and UI-free.
 """
 import random
 
@@ -12,24 +12,20 @@ from .cards import STARTING_DECK, get_card
 from .combat import CombatService
 from .deck import DeckService
 from .enemies import make_enemy
-from .models.combat import CombatState
-from .models.game import Phase, RunState
-from .models.player import PlayerState
-from .rewards import RewardService
+from .models import CombatState, Phase, PlayerState, RunState
 
 NORMAL_ENCOUNTERS = ["slime", "goblin", "brute"]
 BOSS_ID = "boss"
 ENCOUNTERS_BEFORE_BOSS = 3
+REWARD_POOL = ["strike", "defend", "heavy_strike", "quick_strike"]
 
 
 class GameEngine:
     def __init__(self, seed: int,
-                 combat_service: CombatService | None = None,
-                 reward_service: RewardService | None = None):
+                 combat_service: CombatService | None = None):
         self.rng = random.Random(seed)
         self.deck_service = DeckService(self.rng)
         self.combat_service = combat_service or CombatService(self.deck_service)
-        self.reward_service = reward_service or RewardService(self.rng)
         self.state = RunState(seed=seed, phase=Phase.COMBAT)
         self.state.deck = [get_card(cid) for cid in STARTING_DECK]
         self._start_encounter()
@@ -47,6 +43,9 @@ class GameEngine:
         self.combat_service.start_combat(self.state.combat)
         self._log(f"Encounter vs {self.state.combat.enemies[0].name} begins!")
 
+    def _roll_rewards(self, count: int = 3) -> list:
+        return [get_card(self.rng.choice(REWARD_POOL)) for _ in range(count)]
+
     def take_card_reward(self, card_id: str) -> None:
         """Pick one of the offered reward cards, then start the next fight."""
         if self.state.phase != Phase.CARD_REWARD:
@@ -56,14 +55,14 @@ class GameEngine:
             raise ValueError("Card is not one of the offered rewards.")
         self.state.deck.append(get_card(card_id))
         self._log(f"Added {get_card(card_id).name} to deck.")
-        self.state.reward_options = []
-        self.state.is_boss_fight = self.state.encounters_won >= ENCOUNTERS_BEFORE_BOSS
-        self.state.phase = Phase.COMBAT
-        self._start_encounter()
+        self._advance_after_reward()
 
     def skip_card_reward(self) -> None:
         if self.state.phase != Phase.CARD_REWARD:
             raise ValueError("No card reward is pending.")
+        self._advance_after_reward()
+
+    def _advance_after_reward(self) -> None:
         self.state.reward_options = []
         self.state.is_boss_fight = self.state.encounters_won >= ENCOUNTERS_BEFORE_BOSS
         self.state.phase = Phase.COMBAT
@@ -100,7 +99,7 @@ class GameEngine:
                 self._log("The Warden falls. You win the run!")
             else:
                 self.state.phase = Phase.CARD_REWARD
-                self.state.reward_options = self.reward_service.roll_rewards()
+                self.state.reward_options = self._roll_rewards()
                 self._log("Enemy defeated — choose a card reward.")
 
     def _require_combat(self) -> None:

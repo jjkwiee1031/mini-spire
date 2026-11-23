@@ -27,17 +27,13 @@ mini-spire/
 ├─ backend/
 │  ├─ app/
 │  │  ├─ main.py            # FastAPI entry point (wires router, CORS)
-│  │  ├─ api/
-│  │  │  ├─ routes.py       # endpoints: parse input → call engine → return state
-│  │  │  ├─ schemas.py      # Pydantic wire format (what the client sees)
-│  │  │  └─ serialize.py    # domain models → API output
-│  │  ├─ models/            # plain data classes: Card, PlayerState, CombatState, RunState...
+│  │  ├─ api.py             # endpoints + wire schemas + serialization (one file)
+│  │  ├─ models.py          # plain data classes: Card, PlayerState, CombatState, RunState...
 │  │  ├─ cards.py           # card registry + effects (data-driven)
 │  │  ├─ deck.py            # DeckService: draw / shuffle / discard
 │  │  ├─ combat.py          # CombatService: combat rules, enemy turns
 │  │  ├─ enemies.py         # enemy templates + deterministic move cycles
-│  │  ├─ rewards.py         # RewardService
-│  │  └─ game_engine.py     # run state machine (combat → reward → boss → end)
+│  │  └─ game_engine.py     # run state machine + card rewards (combat → reward → boss → end)
 │  └─ tests/                # unit + API tests
 └─ frontend/
    ├─ src/

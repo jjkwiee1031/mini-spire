@@ -4,7 +4,7 @@ Enemies cycle through a fixed, ordered move list (deterministic and
 predictable for the player and tests). A move is an Intent; `_move_index`
 in EnemyState is how far into the cycle the enemy is.
 """
-from .models.combat import EnemyState, Intent, IntentKind
+from .models import EnemyState, Intent, IntentKind
 
 # (kind, value) per move, cycled in order.
 ENEMY_TEMPLATES: dict[str, dict] = {

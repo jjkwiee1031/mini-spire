@@ -1,7 +1,7 @@
 import random
 
 from app.game_engine import GameEngine
-from app.models.game import Phase
+from app.models import Phase
 
 
 def run_full(seed):

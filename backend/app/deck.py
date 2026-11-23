@@ -5,9 +5,7 @@ Takes an RNG callable so tests can force deterministic draws.
 """
 import random as _random
 
-from .models.cards import Card
-from .models.deck import DeckPiles
-
+from .models import Card, DeckPiles
 
 class DeckService:
     def __init__(self, rng: _random.Random):

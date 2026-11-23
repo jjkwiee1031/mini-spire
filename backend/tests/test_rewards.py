@@ -1,7 +1,7 @@
 import random
 
 from app.cards import STARTING_DECK, get_card
-from app.rewards import RewardService
+from app.game_engine import GameEngine
 
 
 def test_starting_deck_has_10_cards():
@@ -9,8 +9,8 @@ def test_starting_deck_has_10_cards():
 
 
 def test_rewards_are_three_cards_from_pool():
-    svc = RewardService(random.Random(0))
-    cards = svc.roll_rewards()
+    eng = GameEngine(seed=0)
+    cards = eng._roll_rewards()
     assert len(cards) == 3
     for c in cards:
         assert c.id in ("strike", "defend", "heavy_strike", "quick_strike")

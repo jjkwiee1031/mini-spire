@@ -5,9 +5,9 @@ Raises ValueError with a readable message for illegal actions — the API layer
 maps that to HTTP 400. No FastAPI imports here; the engine stays framework-free.
 """
 from .cards import CARD_REGISTRY, CardEffectContext
-from .models.cards import CardType
+from .models import CardType
 from .deck import DeckService
-from .models.combat import CombatState, EnemyState, Intent, IntentKind
+from .models import CombatState, EnemyState, Intent, IntentKind
 
 DRAW_PER_TURN = 5
 

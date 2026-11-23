@@ -4,10 +4,7 @@ from app.cards import CARD_REGISTRY
 from app.combat import CombatService
 from app.deck import DeckService
 from app.enemies import make_enemy
-from app.models.cards import Card, CardType
-from app.models.combat import CombatState
-from app.models.deck import DeckPiles
-from app.models.player import PlayerState
+from app.models import Card, CardType, CombatState, DeckPiles, PlayerState
 
 
 def build_combat(deck_cards, enemy_id="slime", rng_seed=0):

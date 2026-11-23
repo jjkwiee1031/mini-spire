@@ -6,13 +6,13 @@ the engine.
 """
 from dataclasses import dataclass, replace
 
-from .models.cards import Card, CardType
+from .models import Card, CardType
 
 
 @dataclass
 class CardEffectContext:
     """Everything an effect might need. Engine fills it in."""
-    combat: "CombatState"          # noqa: F821 - defined in models.combat
+    combat: "CombatState"          # noqa: F821 - defined in models.py
     target_enemy_index: int
 
 
